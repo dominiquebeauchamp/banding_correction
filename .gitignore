@@ -9,4 +9,6 @@ dist/
 *.fits
 *.fit
 *.png
+!docs/images/*.png
 NOTES_banding.md
+!docs/images/*.png
