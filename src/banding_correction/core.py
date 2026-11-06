@@ -1,6 +1,6 @@
 """Remove horizontal banding (row-wise ~1 ADU steps) from a CFA (Bayer) FITS image.
 
-Algorithm (see banding_002.ipynb and banding_003.ipynb):
+Algorithm:
   1. Split the image into its four Bayer channels (layout given by BAYERPAT).
   2. Detect stars on the mean of the two green channels and mask them (NaN) in
      all channels, using the same mask.
