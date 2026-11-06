@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2026-11-05)
 
 - Support both photutils centroid column names (`x_centroid`/`y_centroid` and the older `xcentroid`/`ycentroid`), removing the deprecation warning with photutils >= 3.0.
 
