@@ -63,6 +63,17 @@ def extract_channel(image, offsets):
 # --------------------------------------------------------------------------- #
 # Star masking
 # --------------------------------------------------------------------------- #
+def _centroids(sources):
+    """(x, y) centroid columns, whatever the photutils column naming.
+
+    photutils >= 3.0 uses `x_centroid`/`y_centroid` (the old names are deprecated);
+    older versions only have `xcentroid`/`ycentroid`.
+    """
+    if 'x_centroid' in sources.colnames:
+        return sources['x_centroid'], sources['y_centroid']
+    return sources['xcentroid'], sources['ycentroid']
+
+
 def detect_star_mask(green_mean, fwhm, detect_sigma, radius_factor):
     """Return a boolean mask (True = star) on the channel grid.
 
@@ -76,8 +87,9 @@ def detect_star_mask(green_mean, fwhm, detect_sigma, radius_factor):
         return np.zeros(green_mean.shape, dtype=bool), 0
 
     centers = np.zeros(green_mean.shape, dtype=bool)
-    x = np.clip(np.round(sources['xcentroid']).astype(int), 0, green_mean.shape[1] - 1)
-    y = np.clip(np.round(sources['ycentroid']).astype(int), 0, green_mean.shape[0] - 1)
+    xc, yc = _centroids(sources)
+    x = np.clip(np.round(xc).astype(int), 0, green_mean.shape[1] - 1)
+    y = np.clip(np.round(yc).astype(int), 0, green_mean.shape[0] - 1)
     centers[y, x] = True
     mask = distance_transform_edt(~centers) <= radius_factor * fwhm
     return mask, len(sources)

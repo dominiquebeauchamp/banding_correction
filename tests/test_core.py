@@ -1,8 +1,10 @@
 import numpy as np
 import pytest
 
-from banding_correction.core import (bayer_slices, compute_row_offsets,
-                                     correct_image, estimate_step)
+from astropy.table import Table
+
+from banding_correction.core import (_centroids, bayer_slices, compute_row_offsets,
+                                     correct_image, detect_star_mask, estimate_step)
 
 
 @pytest.mark.parametrize("pattern,expected", [
@@ -61,3 +63,21 @@ def test_correct_image_removes_banding():
     err_before = np.abs(banded.mean(axis=1) - base.mean(axis=1)).mean()
     err_after = np.abs(corrected.mean(axis=1) - base.mean(axis=1)).mean()
     assert err_after < err_before / 3
+
+
+@pytest.mark.parametrize("names", [("x_centroid", "y_centroid"), ("xcentroid", "ycentroid")])
+def test_centroids_both_naming_schemes(names):
+    table = Table({names[0]: [1.5, 2.5], names[1]: [3.5, 4.5]})
+    x, y = _centroids(table)
+    assert list(x) == [1.5, 2.5]
+    assert list(y) == [3.5, 4.5]
+
+
+def test_detect_star_mask_covers_star():
+    rng = np.random.default_rng(3)
+    yy, xx = np.mgrid[:100, :120]
+    image = rng.normal(0, 1, (100, 120)) + 200 * np.exp(-((xx - 60) ** 2 + (yy - 40) ** 2) / (2 * 1.5 ** 2))
+    mask, n = detect_star_mask(image, fwhm=3.0, detect_sigma=5.0, radius_factor=3.0)
+    assert n >= 1
+    assert mask[40, 60]
+    assert not mask[90, 10]
