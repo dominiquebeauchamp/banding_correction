@@ -31,6 +31,22 @@ from banding_correction import correct_image
 corrected, profiles, steps = correct_image(data, "RGGB")
 ```
 
+## Examples
+
+Here is an example of a bias image (ISO 200) showing banding in the R and G1 channels. The G2 and B channels are flat, as expected.
+
+![Bias image before correction](docs/images/bias_048.png)
+
+After applying the banding correction, the image looks like this. All channels are now flat.
+
+![Bias image after correction](docs/images/bias_048_corr.png)
+
+Here is another example, a deep sky object with an exposure time of 10 seconds.
+
+![DSO image before correction](docs/images/M33_013.png)
+
+![DSO image after correction](docs/images/M33_013_corr.png)
+
 ## License
 
 Apache-2.0
